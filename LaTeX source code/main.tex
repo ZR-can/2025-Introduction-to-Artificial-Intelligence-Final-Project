@@ -1,0 +1,90 @@
+\documentclass[letterpaper, 10pt, conference]{IEEEtran}
+
+%解除 IEEE 模板的命令锁定
+\IEEEoverridecommandlockouts%
+% \setlength\stripsep{3pt plus 1pt minus 1pt}
+% \setlength{\belowcaptionskip}{-0.35cm}
+\pdfminorversion=4
+
+% --- 常用宏包 ---
+\usepackage{graphicx}  % 插入图片
+\usepackage{amsmath}   % 数学公式
+
+\usepackage{amsbsy}    % 数学字体
+\usepackage{amsfonts}  % 数学符号
+\usepackage{algorithmic} % 算法伪代码
+\usepackage{bm}       % 黑board math
+\usepackage{bbm}       % 黑board bold
+\usepackage{textcomp}  % 文本符号
+\usepackage{xcolor}    % 颜色
+\usepackage{hyperref}  % 超链接
+\usepackage{cite}      % 引用
+\usepackage{listings}  % 代码
+\usepackage{cuted}    % 缩进
+\usepackage{float}     % 浮动体
+\usepackage{booktabs}  % 表格
+\usepackage{multirow}  % 表格
+\usepackage{makecell}  % 用于在单元格内换行
+\usepackage{array}     % 表格
+\usepackage{mathtools} % 数学工具
+\usepackage{subcaption} % 子图
+\usepackage{caption}   % 图表标题
+\usepackage{mathptmx}  % 使用 Times 字体
+\usepackage[T1]{fontenc} 
+
+\newcommand\red[1]{\textcolor{red}{#1}}
+\newcommand\blue[1]{\textcolor{black}{#1}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\vect}[1]{\boldsymbol{\mathbf{#1}}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% 允许在 "-" 处换行
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds{\-}}
+\makeatother
+
+\graphicspath{{figures/}}
+% --- 论文信息 ---
+\title{\huge \bf Dissecting the Effectiveness of MAPPO:~A Comparative Study Across MARL Paradigms}
+
+\author{
+    % --- 作者列表 ---
+    % 使用一个 tabular 环境来精确控制姓名和学号的对齐
+    \begin{tabular}[t]{ccc} % [t] 确保表格顶部对齐，c 表示列内容居中
+        Ran Zhu & Qi-Ming Qian & Xiao-Han Chen \\ % 第一行：姓名
+        (2024302121271) & (2024302121401) & (2024302121215)    % 第二行：学号
+    \end{tabular}\quad
+    Huai Yu$^\dagger$\quad
+    % --- 脚注信息 ---
+    % 第一个脚注：解释通讯作者的标记
+    \thanks{$^\dagger$Corresponding authors.}
+    % 第二个脚注：提供详细的单位和联系方式
+    \thanks{All authors are with the School of Electronic Information, Wuhan University, Wuhan 430072, China, including Ran Zhu,Qi-Ming Qian,Xiao-Han Chen,Huai Yu.
+            E-mail:{\tt\small\{zhuran, qianqiming, chenxiaohan, yuhuai\}@whu.edu.cn}}
+}
+
+% --- 文档正文 ---
+\begin{document}
+
+% 生成标题
+\maketitle
+
+% 依次引入各个章节文件
+\input{sections/abstract}
+\input{sections/intro}
+\input{sections/related}
+\input{sections/methods}
+\input{sections/experiments}
+\input{sections/conclusion}
+\input{sections/acknowledge}
+
+% --- 参考文献 ---
+\bibliographystyle{IEEEtran} 
+\bibliography{IEEEabrv,MARL}
+
+% --- 附录 (如果需要) ---
+% \appendix
+% \input{sections/appendix}
+
+\end{document}

@@ -1,0 +1,103 @@
+% =============================================
+% ==          sections/related.tex           ==
+% =============================================
+\section{Related Work}\label{sec:related}
+\subsection{A Taxonomy of MARL Algorithms}
+MARL algorithms can be categorized according to several key characteristics.
+Certain classification criteria arise from the inherent properties of multi-agent systems, most notably the structure of the task. In contrast, other criteria, such as the explicit modeling or awareness of other agents, are unique to the context of multi-agent learning. 
+One primary distinction separates algorithms based on their intended task: fully cooperative, fully competitive, or mixed stochastic games~\cite{busoniuComprehensiveSurveyMultiagent2008a}.
+For a concise overview, Figure~\ref{fig:Breakdown of MARL algorithms} presents a breakdown of the surveyed algorithms based on these task categories.
+It is worth noting that MAPPO, QMIX, and OQMIX discussed in this paper all fall into fully cooperative task type, while IPPO is a general-purpose one.
+\begin{figure}[ht!] 
+\centering
+
+% 使用一个不可见的 tabular 来对齐顶部的两个表格
+\begin{tabular}[t]{@{}l@{}}
+    % 左边的 "Fully cooperative" 表格
+    \begin{tabular}{|l|l|}
+        \hline
+        % 使用 \multicolumn 创建跨两列的居中标题
+        \multicolumn{2}{|c|}{\textbf{Fully cooperative}} \\
+        \hline
+        \textbf{Static} & \textbf{Dynamic} \\
+        \hline
+        % 使用 \makecell 来实现单元格内换行
+        % [l] 表示单元格内内容左对齐
+        \makecell[l]{JAL \\ FMQ } & \makecell[l]{Team-Q \\ Distributed-Q  \\ OAL } \\
+        \hline
+    \end{tabular}
+\end{tabular}
+\hspace{0.2cm}
+\begin{tabular}[t]{@{}l@{}}
+    % 右边的 "Fully competitive" 表格
+    \begin{tabular}{|l|}
+        \hline
+        \textbf{Fully competitive} \\
+        \hline
+        Minimax-Q  \\
+        \hline
+    \end{tabular}
+\end{tabular}
+
+\vspace{0.3cm} % 第一行表格和第二行表格之间的垂直间距
+
+% --- 第二行：包含 "Mixed" 表格 ---
+\begin{tabular}{|l|l|}
+    \hline
+    \multicolumn{2}{|c|}{\textbf{Mixed}} \\
+    \hline
+    \textbf{Static} & \textbf{Dynamic} \\
+    \hline
+    % 同样使用 \makecell 将所有条目放在一个单元格内并换行
+    \makecell[l]{
+        Fictitious Play  \\
+        MetaStrategy\\
+        IGA\\
+        WoLF-IGA \\
+        GIGA  \\
+        GIGA-WoLF  \\
+        AWESOME \\
+        Hyper-Q 
+    }
+    &
+    \makecell[l]{
+        Single-agent RL  \\
+        Nash-Q \\
+        CE-Q  \\
+        Asymmetric-Q\\
+        NSCP  \\
+        WoLF-PHC  \\
+        PD-WoLF \\
+        EXORL 
+    } \\
+    \hline
+\end{tabular}
+\caption{Breakdown of MARL algorithms by the type of task they address.Adapted from~\cite{busoniuComprehensiveSurveyMultiagent2008a},© 2008 IEEE.}\label{fig:Breakdown of MARL algorithms}
+\end{figure}
+
+\subsection{Value Function Decomposition for Cooperation}
+A primary challenge in cooperative MARL is credit assignment: determining which agents contributed to the team's success or failure. Value Function Decomposition (VFD) methods address this by learning a global joint action-value function, $Q_{\text{tot}}$, as a composition of individual agent utility functions, $Q_i$. A key theoretical underpinning for many VFD methods is the Individual-Global-Max (IGM) principle, which ensures that a greedy selection of actions at the local level results in a globally optimal joint action~\cite{hongRethinkingIndividualGlobal2022}.
+
+The pioneering work in this area, Value Decomposition Networks (VDN)~\cite{sunehagValueDecompositionNetworksCooperative2017}, proposed a simple summation:
+\begin{equation}
+    Q_{\text{tot}} = \sum_{i=1}^{n} Q_i.
+    \label{eq:Qtot=Qi}
+\end{equation}
+While effective and compliant with the IGM principle, this additive approach restricts the representational capacity of the joint value function. Building upon this, QMIX~\cite{rashidQMIXMonotonicValue2018} introduces a mixing network that estimates $Q_{\text{tot}}$ from the individual $Q_i$ values. It enforces a monotonicity constraint,
+\begin{equation}
+    \frac{\partial Q_{\text{tot}}}{\partial Q_i} \ge 0,
+    \label{eq:partial_derivative_condition}
+\end{equation}
+which is a less restrictive condition for satisfying the IGM principle, thereby allowing for a much richer class of joint value functions to be learned. Optimistically-Weighted QMIX (OW)~\cite{rashidWeightedQMIXExpanding2020}, an algorithm included in our study, further extends this by using an optimistic weighting scheme to improve credit assignment, especially in tasks with complex agent interactions.
+
+\subsection{Actor-Critic Methods under Centralized Training}
+
+As an alternative to VFD, the Centralized Training with Decentralized Execution (CTDE) paradigm has become a dominant force in MARL, particularly for actor-critic methods. The core philosophy of CTDE is to leverage global information during the training phase to mitigate the non-stationarity of the multi-agent learning problem, while ensuring that the resulting policies can be executed in a decentralized manner using only local observations.
+
+In this framework, the critic is centralized and conditioned on the global state $s$ (or the joint observation-action history of all agents), providing a stable and accurate value estimate. This centralized critic then guides the updates for decentralized actors, which learn policies $\pi_i$ based on their local observation histories $\tau_i$. An early and influential off-policy example is MADDPG~\cite{loweMultiAgentActorCriticMixed2020}, which extends DDPG by augmenting each agent's critic with the policies of other agents.
+
+Our primary algorithm of interest, MAPPO~\cite{yuSurprisingEffectivenessPPO2022}, adapts the on-policy Proximal Policy Optimization (PPO) algorithm to this CTDE framework. MAPPO inherits the stability and reliability of PPO, using a clipped surrogate objective to prevent destructive policy updates. Its use of a centralized critic provides a high-quality advantage estimate that is crucial for stable and efficient learning in complex cooperative scenarios, leading to its state-of-the-art performance across numerous benchmarks.
+
+\subsection{Independent Learning}
+Independent Proximal Policy Optimization (IPPO), a form of independent learning where each agent only estimates its local value function, can perform as well as or even better than state-of-the-art joint learning methods on the popular multi-agent benchmark suite SMAC, with almost no need for hyperparameter tuning~\cite{wittIndependentLearningAll2020}.
+Despite its various theoretical shortcomings, IPPO, which possesses simplicity and scalability, can serve as a key comparison in our analysis to empirically quantify the benefits of the more complex coordination mechanisms adopted by the VFD and CTDE methods.
