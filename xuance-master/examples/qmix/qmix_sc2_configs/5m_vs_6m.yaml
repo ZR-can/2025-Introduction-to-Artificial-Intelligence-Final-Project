@@ -1,0 +1,69 @@
+# ==================== 基础配置 ====================
+dl_toolbox: "torch"  # 使用的深度学习框架: ["torch", "mindspore", "tensorlayer"] 三选一
+project_name: "XuanCe_Benchmark"  # 项目名称
+logger: "tensorboard"  # 日志工具: ["tensorboard", "wandb"] 二选一
+wandb_user_name: "your_user_name"  # 若使用wandb需填写用户名
+render: True  # 是否开启环境渲染
+render_mode: 'rgb_array'  # 渲染模式: ['human'直接显示, 'rgb_array'返回像素数组]
+test_mode: False  # 是否为测试模式(不训练)
+device: "cuda:0"  # 计算设备("cuda:X"或"cpu")
+
+# ==================== 算法与环境配置 ====================
+agent: "QMIX"  # 使用的多智能体算法
+global_state: True  # 是否使用全局状态信息
+env_name: "StarCraft2"  # 环境名称
+env_id: "5m_vs_6m"  # 具体场景(5个marine vs 6个marine)
+fps: 15  # 环境帧率控制
+policy: "Mixing_Q_network"  # 策略网络类型
+representation: "Basic_RNN"  # 状态表示网络
+vectorize: "Subproc_StarCraft2"  # 环境并行化方法
+
+# ============ 神经网络结构配置 ============ 
+# --- RNN相关参数 ---
+use_recurrent: True  # 是否使用循环网络
+rnn: "GRU"  # RNN类型(GRU/LSTM)
+recurrent_layer_N: 1  # 循环网络层数
+fc_hidden_sizes: [64, ]  # 全连接层维度
+recurrent_hidden_size: 64  # RNN隐藏层维度
+N_recurrent_layers: 1  # RNN堆叠层数
+dropout: 0  # Dropout比率(0表示不使用)
+
+# --- 网络通用参数 ---
+representation_hidden_size: [64, ]  # 表示网络隐藏层维度
+q_hidden_size: [64, ]  # Q网络各隐藏层维度
+activation: "ReLU"  # 激活函数类型
+
+# --- QMIX特有结构 ---
+hidden_dim_mixing_net: 32  # 混合网络隐藏层维度
+hidden_dim_hyper_net: 32  # 超网络隐藏层维度
+
+# ==================== 训练参数 ====================
+seed: 1  # 随机种子
+parallels: 1  # 并行环境数量(当前为1，注释提示可设为8)
+buffer_size: 5000  # 经验回放缓冲区大小
+batch_size: 32  # 训练批大小
+learning_rate: 0.0007  # 学习率
+gamma: 0.99  # 折扣因子
+double_q: True  # 是否使用Double Q-learning
+
+# --- 探索策略 ---
+start_greedy: 1.0  # 初始探索率(完全随机)
+end_greedy: 0.05  # 最终探索率(5%随机)
+decay_step_greedy: 5000000  # 探索率衰减步数
+
+# --- 训练控制 ---
+start_training: 1000  # 预热步数(先收集1000个episode再训练)
+running_steps: 10000000  # 总训练步数(10M)
+train_per_step: False  # 训练频率: True=每步训练, False=每个episode训练
+training_frequency: 1  # 训练间隔(配合train_per_step使用)
+sync_frequency: 200  # 目标网络同步间隔
+
+# --- 梯度处理 ---
+use_grad_clip: False  # 是否使用梯度裁剪
+grad_clip_norm: 0.5  # 梯度裁剪阈值
+
+# ==================== 评估与保存 ====================
+eval_interval: 100000  # 评估间隔(每100k步评估一次)
+test_episode: 16  # 每次评估运行的episode数
+log_dir: "./logs/qmix/5m_vs_6m/"  # 日志保存路径
+model_dir: "./models/qmix/5m_vs_6m/"  # 模型保存路径
